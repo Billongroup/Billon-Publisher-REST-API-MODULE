@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="https://NotificationInterface.dm.billongroup.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="https://NotificationInterface.dm.billongroup.com/" targetNamespace="https://NotificationInterface.dm.billongroup.com/">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://NotificationInterface.dm.billongroup.com/">
+
+    <xs:element name="prepareNotificationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="1" name="Client" type="tns:Client"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="prepareNotificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="1" name="status" type="tns:PrepareNotificationStatus"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sendNotificationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="1" name="jobId" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="subject" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="smsContent" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="emailContent" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="1" name="objectId" type="xs:string"/>
+                <xs:element maxOccurs="1" minOccurs="1" name="objectType" type="xs:string"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="attachment" type="tns:Attachment"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="sendNotificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="1" name="status" type="tns:SendNotificationStatus"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="discardNotificationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="discardNotificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="1" name="status" type="tns:DiscardNotificationStatus"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="resendNotificationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="resendNotificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="1" minOccurs="1" name="status" type="tns:ResendNotificationStatus"/>
+                <xs:element maxOccurs="1" minOccurs="0" name="jobId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Types -->
+    <xs:complexType name="Client">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="clientContactData" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="notificationType" type="tns:NotificationType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Attachment">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="fileName" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="1" name="file" type="xs:base64Binary"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="PrepareNotificationStatus">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="PREPARED_SUCCESSFULLY"/>
+            <!-- = 1 -->
+            <xs:enumeration value="PREPARED_ERROR"/>
+            <!-- = 2 -->
+            <xs:enumeration value="CLIENT_CONTACT_DATA_NOT_VALID"/>
+            <!-- = 3 -->
+            <xs:enumeration value="NOTIFICATION_TYPE_NOT_VALID"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SendNotificationStatus">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="SENDING_STARTED_SUCCESSFULLY"/>
+            <!-- = 1 -->
+            <xs:enumeration value="SENDING_ERROR"/>
+            <!-- = 2 -->
+            <xs:enumeration value="JOB_ID_NOT_FOUND"/>
+            <!-- = 3 -->
+            <xs:enumeration value="SMS_CONTENT_IS_EMPTY"/>
+            <!-- = 4 -->
+            <xs:enumeration value="EMAIL_CONTENT_IS_EMPTY"/>
+            <!-- = 5 -->
+            <xs:enumeration value="SUBJECT_IS_EMPTY"/>
+            <!-- = 6 -->
+            <xs:enumeration value="SMS_LIMIT_REACHED"/>
+            <!-- = 7 -->
+            <xs:enumeration value="NOTIFICATION_ALREADY_SENT"/>
+            <!-- = 8 -->
+            <xs:enumeration value="NOTIFICATION_DISCARDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DiscardNotificationStatus">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="DISCARD_SUCCESSFULLY"/>
+            <!-- = 1 -->
+            <xs:enumeration value="DISCARD_ERROR"/>
+            <!-- = 2 -->
+            <xs:enumeration value="JOB_ID_NOT_FOUND"/>
+            <!-- = 3 -->
+            <xs:enumeration value="NOTIFICATION_DISCARDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ResendNotificationStatus">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="RESENDING_STARTED_SUCCESSFULLY"/>
+            <!-- = 1 -->
+            <xs:enumeration value="RESENDING_ERROR"/>
+            <!-- = 2 -->
+            <xs:enumeration value="JOB_ID_NOT_FOUND"/>
+            <!-- = 3 -->
+            <xs:enumeration value="SMS_LIMIT_REACHED"/>
+            <!-- = 4 -->
+            <xs:enumeration value="NOTIFICATION_DISCARDED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NotificationType">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="MAIL"/>
+            <!-- = 1 -->
+            <xs:enumeration value="SMS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ValidationResponse">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="OK"/>
+            <!-- = 1 -->
+            <xs:enumeration value="CLIENT_CONTACT_DATA_NOT_VALID"/>
+            <!-- = 2 -->
+            <xs:enumeration value="NOTIFICATION_TYPE_NOT_VALID"/>
+            <!-- = 3 -->
+            <xs:enumeration value="CONTENT_IS_EMPTY"/>
+            <!-- = 4 -->
+            <xs:enumeration value="SUBJECT_IS_EMPTY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NotificationStatus">
+        <xs:restriction base="xs:string">
+            <!-- = 0 -->
+            <xs:enumeration value="PREPARED"/>
+            <!-- = 1 -->
+            <xs:enumeration value="SENDING_STARTED_SUCCESSFULLY"/>
+            <!-- = 2 -->
+            <xs:enumeration value="DISCARDED"/>
+            <!-- = 3 -->
+            <xs:enumeration value="SENDING_ERROR"/>
+            <!-- = 4 -->
+            <xs:enumeration value="SENDING_IN_PROGRESS"/>
+            <!-- = 5 -->
+            <xs:enumeration value="NOTIFICATION_SENT"/>
+            <!-- = 6 -->
+            <xs:enumeration value="NOTIFICATION_DELIVERED"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="sendNotificationRequest">
+    <wsdl:part element="tns:sendNotificationRequest" name="sendNotificationRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="prepareNotificationRequest">
+    <wsdl:part element="tns:prepareNotificationRequest" name="prepareNotificationRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="resendNotificationRequest">
+    <wsdl:part element="tns:resendNotificationRequest" name="resendNotificationRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="resendNotificationResponse">
+    <wsdl:part element="tns:resendNotificationResponse" name="resendNotificationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sendNotificationResponse">
+    <wsdl:part element="tns:sendNotificationResponse" name="sendNotificationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="discardNotificationResponse">
+    <wsdl:part element="tns:discardNotificationResponse" name="discardNotificationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="prepareNotificationResponse">
+    <wsdl:part element="tns:prepareNotificationResponse" name="prepareNotificationResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="discardNotificationRequest">
+    <wsdl:part element="tns:discardNotificationRequest" name="discardNotificationRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="NotificationInterfaceServicePortType">
+    <wsdl:operation name="sendNotification">
+      <wsdl:input message="tns:sendNotificationRequest" name="sendNotificationRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:sendNotificationResponse" name="sendNotificationResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prepareNotification">
+      <wsdl:input message="tns:prepareNotificationRequest" name="prepareNotificationRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:prepareNotificationResponse" name="prepareNotificationResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="resendNotification">
+      <wsdl:input message="tns:resendNotificationRequest" name="resendNotificationRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:resendNotificationResponse" name="resendNotificationResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="discardNotification">
+      <wsdl:input message="tns:discardNotificationRequest" name="discardNotificationRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:discardNotificationResponse" name="discardNotificationResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NotificationInterfaceServicePortTypeSoap11" type="tns:NotificationInterfaceServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="sendNotification">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="sendNotificationRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="sendNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prepareNotification">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="prepareNotificationRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="prepareNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="resendNotification">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="resendNotificationRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="resendNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="discardNotification">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="discardNotificationRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="discardNotificationResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NotificationInterfaceServicePortTypeService">
+    <wsdl:port binding="tns:NotificationInterfaceServicePortTypeSoap11" name="NotificationInterfaceServicePortTypeSoap11">
+      <soap:address location="http://localhost:8998/dm-publisher-publishingservice-ws/NotificationInterfaceService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

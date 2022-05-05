@@ -1,0 +1,542 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <property name="blob_type" value="bytea" dbms="postgresql"/>
+    <property name="db.tablespace" value="pg_default" context="postgres"/>
+    <property name="schema" value="brum" context="postgres"/>
+
+    <changeSet author="PK" id="1">
+        <createTable schemaName="${schema}" tableName="users" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_pk"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_by" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password_updated_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_notification_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="role_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="department" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sms_code" type="VARCHAR(255)"/>
+            <column name="sms_code_generation_time" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="is_robot" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="failed_login_attempts" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocked_since" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+        <createTable schemaName="${schema}" tableName="password_history" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="password_history_pk"/>
+            </column>
+            <column name="user_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable schemaName="${schema}" tableName="users_history" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_history_pk"/>
+            </column>
+            <column name="user_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="bool">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable schemaName="${schema}" tableName="roles" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="role_pk"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable schemaName="${schema}" tableName="privileges" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="privilege_pk"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createTable schemaName="${schema}" tableName="role_privilege" tablespace="${db.tablespace}">
+            <column name="role_id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="role_privilege_role_pk"/>
+            </column>
+            <column name="privilege_id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="role_privilege_privilege_pk"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="users_external_id_idx" schemaName="${schema}" tableName="users" unique="true"
+                     tablespace="${db.tablespace}">
+            <column name="external_id"/>
+        </createIndex>
+        <createIndex indexName="users_username_idx" schemaName="${schema}" tableName="users" unique="true"
+                     tablespace="${db.tablespace}">
+            <column name="username"/>
+        </createIndex>
+        <createIndex indexName="users_history_id_idx" schemaName="${schema}" tableName="users_history" unique="false"
+                     tablespace="${db.tablespace}">
+            <column name="id"/>
+        </createIndex>
+        <createIndex indexName="roles_external_id_idx" schemaName="${schema}" tableName="roles" unique="true"
+                     tablespace="${db.tablespace}">
+            <column name="external_id"/>
+        </createIndex>
+        <createIndex indexName="roles_name_idx" schemaName="${schema}" tableName="roles" unique="true"
+                     tablespace="${db.tablespace}">
+            <column name="name"/>
+        </createIndex>
+        <createIndex indexName="privileges_external_id_idx" schemaName="${schema}" tableName="privileges" unique="true"
+                     tablespace="${db.tablespace}">
+            <column name="external_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="created_by" baseTableName="users"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="users_created_by_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="users"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="password_history"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="password_history_user_id_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="users"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="updated_by" baseTableName="users_history"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="users_history_updated_by_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="users"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="users_history"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="users_history_user_id_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="users"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="users_role_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="roles"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="role_privilege"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="role_privilege_roles_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="roles"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="privilege_id" baseTableName="role_privilege"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="role_privilege_privileges_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="privileges"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+
+        <createTable schemaName="${schema}" tableName="identities" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="identity_pk"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_by" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="document_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="additional_information" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_gdpr_suspended" type="bool">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="created_by" baseTableName="identities"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="identities_created_by_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="users"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <createTable schemaName="${schema}" tableName="base_documents" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="base_document_pk"/>
+            </column>
+            <column name="publication_status" type="VARCHAR(255)"/>
+            <column name="job_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="blockchain_address" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable schemaName="${schema}" tableName="public_documents" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="public_document_pk"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="public_documents"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="public_documents_base_documents_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="base_documents"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <createTable schemaName="${schema}" tableName="private_documents" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="private_document_pk"/>
+            </column>
+            <column name="forgetting_job_id" type="VARCHAR(255)"/>
+            <column name="forgetting_status" type="VARCHAR(255)"/>
+            <column name="identity_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="private_documents"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="private_documents_base_documents_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="base_documents"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="identity_id" baseTableName="private_documents"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="private_documents_identity_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="identities"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <createTable schemaName="${schema}" tableName="parameters" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="parameter_pk"/>
+            </column>
+            <column name="key" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hidden" type="bool" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="NOTIFICATION_SERVICE_URL" />
+            <column name="value" value="http://localhost:8998/dm-publisher-publishingservice-ws/NotificationInterfaceService" />
+            <column name="description" value="Endpoint for notification service" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="JWT_EXPIRATION_TIME" />
+            <column name="value" value="30" />
+            <column name="description" value="Time in minutes after which JWT token is expired" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="JWT_REFRESH_EXPIRATION_TIME" />
+            <column name="value" value="40" />
+            <column name="description" value="Time in minutes after which JWT token cannot be refreshed" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="JWT_PATCH_PASSWORD_EXPIRATION_TIME" />
+            <column name="value" value="60" />
+            <column name="description" value="Time in minutes after which JWT token for patch password is expired" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="PASSWORD_EXPIRATION_TIME" />
+            <column name="value" value="90" />
+            <column name="description" value="Time in days after which password change is required" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="FRONT_END_URL" />
+            <column name="value" value="https://billongroup.com" />
+            <column name="description" value="URL to front end panel for notifications" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="SMS_CODE_EXPIRATION_TIME" />
+            <column name="value" value="10" />
+            <column name="description" value="SMS code expiration time in minutes" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="SMS_CODE_CONTENT" />
+            <column name="value" value="Kod autoryzacyjny: &lt;&lt;CODE&gt;&gt;" />
+            <column name="description" value="Content for sms with authorization code" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="SET_PASSWORD_EMAIL_TITLE" />
+            <column name="value" value="Rejestracja konta." />
+            <column name="description" value="Title for registration notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="SET_PASSWORD_EMAIL_CONTENT" />
+            <column name="value" value="&lt;html&gt;&lt;body&gt;&lt;p&gt;Drogi Użytkowniku,&lt;br&gt;&lt;br&gt;rejestracja Twojego konta w systemie Blockchain została rozpoczęta, by ją dokończyć ustaw hasło:&lt;a href=&quot;&lt;&lt;LINK&gt;&gt;&quot;&gt;&lt;&lt;LINK&gt;&gt;&lt;/a&gt;&lt;br&gt;Pozadrawiamy&lt;br&gt;Zespół Billon&lt;p&gt;&lt;/body&gt;&lt;/html&gt;" />
+            <column name="description" value="Email content for set registration notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="SET_PASSWORD_URL_PREFIX" />
+            <column name="value" value="/setPassword" />
+            <column name="description" value="Prefix for registration url" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="RESET_PASSWORD_NOTIFICATION_TITLE" />
+            <column name="value" value="Odzyskiwanie hasła" />
+            <column name="description" value="Title for reset password notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="RESET_PASSWORD_EMAIL_CONTENT" />
+            <column name="value" value="&lt;html&gt;&lt;body&gt;&lt;p&gt;Drogi Użytkowniku,&lt;br&gt;&lt;br&gt;Jeśli chcesz odzyskać hasło, kliknij w poniższy link: &lt;a href=&quot;&lt;&lt;LINK&gt;&gt;&quot;&gt;&lt;&lt;LINK&gt;&gt;&lt;/a&gt;&lt;br&gt;Pozdrawiamy&lt;br&gt;Zespół Billon&lt;p&gt;&lt;/body&gt;&lt;/html&gt;" />
+            <column name="description" value="Email content for reset password notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="RESET_PASSWORD_URL_PREFIX" />
+            <column name="value" value="/forgottenPassword" />
+            <column name="description" value="Prefix for reset password url" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="PASSWORD_EXPIRED_TITLE" />
+            <column name="value" value="Twoje hasło wygasło" />
+            <column name="description" value="Title for expired password notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="PASSWORD_EXPIRED_EMAIL_CONTENT" />
+            <column name="value" value="&lt;html&gt;&lt;body&gt;&lt;p&gt;Drogi Użytkowniku,&lt;br&gt;&lt;br&gt;Twoje hasło straciło wazność, aby odblokować dostęp do systemu, zaloguj się na swoje konto i ustaw nowe hasło. &lt;br&gt;Pozdrawiamy&lt;br&gt;Zespół Billon&lt;p&gt;&lt;/body&gt;&lt;/html&gt;" />
+            <column name="description" value="Email content for expired password notification" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="ONE_STEP_PUBLISH" />
+            <column name="value" value="false" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Flag informing if publication mode is set to one step or two step" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="DOCUMENT_PREVIEW_URL" />
+            <column name="value" value="https://mvpreader.demo.tdm.bybillon.com/document" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Reader panel url" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="PUBLISHER_NAME" />
+            <column name="value" value="Billon" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Publicator name" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="ADMIN_PASSWORD_LENGTH" />
+            <column name="value" value="15" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Minimum password length for administrator" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="ADMIN_UNIQUE_PASSWORDS" />
+            <column name="value" value="10" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Minimum amount of different passwords for administrator" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="ADMIN_PASSWORD_COMPLEXITY_GROUPS" />
+            <column name="value" value="3" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Amount of groups admin password has to fit in (lowercase character, uppercase character, number, special character)" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="USER_PASSWORD_LENGTH" />
+            <column name="value" value="10" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Minimum password length for other than administrator" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="USER_UNIQUE_PASSWORDS" />
+            <column name="value" value="5" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Minimum amount of different passwords for other than administrator" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="USER_PASSWORD_COMPLEXITY_GROUPS" />
+            <column name="value" value="3" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Amount of groups user password has to fit in (lowercase character, uppercase character, number, special character)" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="HOURS_TO_CHANGE_PASSWORD" />
+            <column name="value" value="24" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Minimum time in hours required to change password" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="FAILED_LOGIN_BLOCK_TIME" />
+            <column name="value" value="3" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Period of time to block user after failed login in minutes" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="MAX_FAILED_LOGIN_ATTEMPTS" />
+            <column name="value" value="3" />
+            <column name="hidden" valueBoolean="false"/>
+            <column name="description" value="Amount of attempts for user to login before being blocked for some period of time" />
+        </insert>
+        <insert schemaName="${schema}" tableName="parameters">
+            <column name="key" value="RECIPIENT_SOURCE_SYSTEM_NAMES" />
+            <column name="value" value="BILLON1,BILLON2,BILLON3" />
+            <column name="description" value="Recipient source system names separated by ','" />
+        </insert>
+
+        <createTable schemaName="${schema}" tableName="recipients" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="recipient_pk"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable schemaName="${schema}" tableName="contact_details" tablespace="${db.tablespace}">
+            <column autoIncrement="true" name="id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="contact_details_pk"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient_id" type="bigserial">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable schemaName="${schema}" tableName="document_contact_details" tablespace="${db.tablespace}">
+            <column name="document_id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_contact_details_document_id_pk"/>
+            </column>
+            <column name="contact_details_id" type="bigserial">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="document_contact_details_contact_details_id_pk"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="document_id" baseTableName="document_contact_details"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="document_contact_details_document_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="public_documents"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="contact_details_id" baseTableName="document_contact_details"
+                                 baseTableSchemaName="${schema}"
+                                 constraintName="document_contact_details_contact_details_fk" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="contact_details"
+                                 referencedTableSchemaName="${schema}" referencesUniqueColumn="true"/>
+    </changeSet>
+</databaseChangeLog>

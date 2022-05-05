@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd http://www.springframework.org/schema/security https://www.springframework.org/schema/security/spring-security.xsd">
+
+    <jee:local-slsb id="categoryFacade"
+                    jndi-name="java:global/dm-publisher/com.zunit.dm-mvp.dm-publisher-dm-publisher-services-impl-1.0.0/MVPCategoryFacadeImpl!com.zunit.dm.publisher.services.category.facade.mvp.MVPCategoryFacade"
+                    business-interface="com.zunit.dm.publisher.services.category.facade.mvp.MVPCategoryFacade"/>
+
+    <jee:local-slsb id="identityFacade"
+                    jndi-name="java:global/dm-publisher/com.zunit.dm-common.dm-publisher-dm-publisher-services-impl-1.0.0/DefaultIdentityServiceImpl"
+                    business-interface="com.zunit.dm.publisher.services.identity.facade.IdentityFacade"/>
+
+    <jee:local-slsb id="documentFacade"
+                    jndi-name="java:global/dm-publisher/com.zunit.dm-mvp.dm-publisher-dm-publisher-services-impl-1.0.0/MVPDocumentsFacadeImpl!com.zunit.dm.publisher.services.documents.facade.mvp.MVPDocumentsFacade"
+                    business-interface="com.zunit.dm.publisher.services.documents.facade.mvp.MVPDocumentsFacade"/>
+
+    <context:component-scan base-package="com.zunit.dm.publisher.services" />
+
+</beans>
